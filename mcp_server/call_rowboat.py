@@ -1,0 +1,48 @@
+import requests
+from rowboat import Client, StatefulChat
+
+
+PROJECT_ID = "<PROJECT_ID>"
+API_KEY = "<API_KEY>"
+
+client = Client(
+    host="http://localhost:3000",
+    project_id=PROJECT_ID,
+    api_key=API_KEY,
+)
+
+
+def use_requests_api(user_input: str):
+    url = f"http://localhost:3000/api/v1/{PROJECT_ID}/chat"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {API_KEY}"
+    }
+    request_json = {
+        "messages": [
+            {"role": "user", "content": user_input},
+        ],
+        "state": None,
+    }
+
+    response = requests.post(url, headers=headers, json=request_json)
+    resp_json = response.json()
+
+    response_str = resp_json["messages"][-1]["content"]
+    return response_str
+
+
+def use_rowboat_stateful_chat(user_input: str):
+    chat = StatefulChat(client)
+    response = chat.run(user_input)
+    return response
+
+
+if __name__ == "__main__":
+    user_input = "What will the weather be in Rajkot tomorrow?"
+
+    using_requests_api = use_requests_api(user_input=user_input)
+    print(f"Using requests API call: {using_requests_api}")
+
+    using_rowboat_stateful_chat = use_rowboat_stateful_chat(user_input=user_input)
+    print(f"Using Rowboat Stateful Chat: {using_rowboat_stateful_chat}")
