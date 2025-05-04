@@ -70,9 +70,16 @@ async def get_weather_info(place_name: str) -> dict:
         data = resp.json()
 
         today_date = data["daily"]["time"][0]
-        data["today_date"] = today_date
+        weather_preds = {day: {} for day in data["daily"]["time"]}
+        for i, time in enumerate(data["daily"]["time"]):
+            weather_preds[time]["max_temp"] = data["daily"]["temperature_2m_max"][i]
+            weather_preds[time]["min_temp"] = data["daily"]["temperature_2m_min"][i]
+            weather_preds[time]["precipitation_probability"] = data["daily"]["precipitation_probability_max"][i]
 
-        return data
+        return {
+            "today_date": today_date,
+            "weather_preds": weather_preds
+        }
     except Exception as e:
         print(f"Error in get_weather_info: {e}")
         return {"error": "Error getting the weather information"}
