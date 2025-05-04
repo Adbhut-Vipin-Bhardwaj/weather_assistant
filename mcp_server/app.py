@@ -43,10 +43,11 @@ async def get_lat_lon(place_name: str):
 async def get_weather_info(place_name: str) -> dict:
     """
     Get weather information for a specific location. Returns info for the next 7 days
+    Also returns today's date
     Args:
         place_name: Name of the place
     Returns:
-        A dict with weather predictions for the next 7 days
+        A dict with weather predictions for the next 7 days and today's date
     """
     try:
         lat, lon = await get_lat_lon(place_name)
