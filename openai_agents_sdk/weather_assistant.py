@@ -46,7 +46,7 @@ class WeatherAssistant:
             name=weather_agent_prompt.name,
             instructions=instructions,
             mcp_servers=[mcp_server],
-            model="openai/gpt-4o-mini",
+            model="openai/gpt-4.1-mini",
         )
         return agent
 
