@@ -4,10 +4,11 @@ from mcp.server import FastMCP
 app = FastMCP("Weather Assistant Server", port=9300)
 
 
-async def get_lat_lon(place_name: str):
+@app.tool()
+async def get_lat_lon(place_name: str) -> dict:
     """
     Return (latitude, longitude) for a given place_name using
-    OSM Nominatim’s public JSON API—no API key needed.
+    OSM Nominatim’s public JSON API
     """
     try:
         url = "https://nominatim.openstreetmap.org/search"
@@ -33,27 +34,27 @@ async def get_lat_lon(place_name: str):
         # Extract and return floats
         lat = float(results[0]["lat"])
         lon = float(results[0]["lon"])
-        return lat, lon
+        return {"latitude": lat, "longitude": lon}
     except Exception as e:
         print(f"Error in get_lat_lon: {e}")
-        return None, None
+        return {"latitude": None, "longitude": None}
 
 
 @app.tool()
-async def get_weather_info(place_name: str) -> dict:
+async def get_weather_info(lat: float, lon: float) -> dict:
     """
     Get weather information for a specific location. Returns info for the next 7 days
     Also returns today's date
     Args:
-        place_name: Name of the place
+        lat (float): Latitude of the location
+        lon (float): Longitude of the location
     Returns:
         A dict with weather predictions for the next 7 days and today's date
     """
     try:
-        lat, lon = await get_lat_lon(place_name)
         if not lat or not lon:
-            print("Latitide and Longitude not found")
-            return {"error": "Latitide and Longitude not found"}
+            print("Latitude and Longitude not found")
+            return {"error": "Latitude and Longitude not found"}
 
         url = "https://api.open-meteo.com/v1/forecast"
         params = {
@@ -77,6 +78,8 @@ async def get_weather_info(place_name: str) -> dict:
             weather_preds[time]["precipitation_probability"] = data["daily"]["precipitation_probability_max"][i]
 
         return {
+            "latitude": lat,
+            "longitude": lon,
             "today_date": today_date,
             "weather_preds": weather_preds
         }
