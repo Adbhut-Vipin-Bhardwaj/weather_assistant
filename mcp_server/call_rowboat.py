@@ -28,7 +28,7 @@ def use_requests_api(user_input: str):
     response = requests.post(url, headers=headers, json=request_json)
     resp_json = response.json()
 
-    response_str = resp_json["messages"][-1]["content"]
+    response_str = resp_json["turn"]["output"][-1]["content"]
     return response_str
 
 
