@@ -1,5 +1,6 @@
 import requests
-from rowboat import Client, StatefulChat
+from rowboat.client import Client
+from rowboat.schema import UserMessage
 
 
 PROJECT_ID = "<PROJECT_ID>"
@@ -7,8 +8,8 @@ API_KEY = "<API_KEY>"
 
 client = Client(
     host="http://localhost:3000",
-    project_id=PROJECT_ID,
-    api_key=API_KEY,
+    projectId=PROJECT_ID,
+    apiKey=API_KEY,
 )
 
 
@@ -32,10 +33,12 @@ def use_requests_api(user_input: str):
     return response_str
 
 
-def use_rowboat_stateful_chat(user_input: str):
-    chat = StatefulChat(client)
-    response = chat.run(user_input)
-    return response
+def use_rowboat_sdk(user_input: str):
+    result = client.run_turn(
+        messages=[UserMessage(role='user', content=user_input)],
+    )
+    response_str = result.turn.output[-1].content
+    return response_str
 
 
 if __name__ == "__main__":
@@ -44,5 +47,5 @@ if __name__ == "__main__":
     using_requests_api = use_requests_api(user_input=user_input)
     print(f"Using requests API call: {using_requests_api}")
 
-    using_rowboat_stateful_chat = use_rowboat_stateful_chat(user_input=user_input)
-    print(f"Using Rowboat Stateful Chat: {using_rowboat_stateful_chat}")
+    using_rowboat_sdk = use_rowboat_sdk(user_input=user_input)
+    print(f"Using Rowboat SDK: {using_rowboat_sdk}")
