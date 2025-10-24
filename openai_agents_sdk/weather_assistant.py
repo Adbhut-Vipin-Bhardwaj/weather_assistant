@@ -41,7 +41,7 @@ class WeatherAssistant:
         pass
 
     def __create_agent(self, mcp_server):
-        instructions = f"Instructions: {weather_agent_prompt.instructions}\n\nExamples: {weather_agent_prompt.examples}"
+        instructions = f"Instructions: {weather_agent_prompt.instructions}"
         agent = Agent(
             name=weather_agent_prompt.name,
             instructions=instructions,
